@@ -1,0 +1,6 @@
+IMG_NAME=test-target
+TARGET_HOSTNAME=test-target
+DEPLOY_COMPRESSION=xz
+ENABLE_SSH=1
+CLEAN=1
+STAGE_LIST="stage0 stage1 stage2"

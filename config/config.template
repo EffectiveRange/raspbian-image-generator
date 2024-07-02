@@ -1,0 +1,6 @@
+IMG_NAME={{target_name}}
+TARGET_HOSTNAME={{target_hostname}}
+DEPLOY_COMPRESSION={{compression}}
+ENABLE_SSH={{enable_ssh}}
+CLEAN={{clean_build}}
+STAGE_LIST="{{stage_list}}"

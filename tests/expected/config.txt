@@ -1,0 +1,6 @@
+# For more options and information see
+# http://rpf.io/configtxt
+
+[all]
+option3
+option4

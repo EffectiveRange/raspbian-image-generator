@@ -1,0 +1,38 @@
+[
+  {
+    "package": "package1",
+    "version": "1.0.0",
+    "release": {
+      "owner": "owner1",
+      "repo": "repo1",
+      "tag": "v1.0.0",
+      "matcher": "*.deb",
+      "token": "token1"
+    }
+  },
+  {
+    "package": "package2",
+    "version": "2.0.0",
+    "file_url": "url2"
+  },
+  {
+    "package": "package3",
+    "release": {
+      "owner": "owner3",
+      "repo": "repo3",
+      "tag": "v3.0.0",
+      "matcher": "*.deb",
+      "token": "$TEST_TOKEN"
+    }
+  },
+  {
+    "package": "package4",
+    "file_url": "url4",
+    "release": {
+      "owner": "owner4",
+      "repo": "repo4",
+      "tag": "v4.0.0",
+      "matcher": "*.deb"
+    }
+  }
+]

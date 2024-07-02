@@ -1,0 +1,66 @@
+[
+  {
+    "name": "target1",
+    "version": "1.0.0",
+    "reference": "ref1",
+    "packages": [
+      {
+        "package": "package1",
+        "version": "1.0.0"
+      },
+      {
+        "package": "package2",
+        "version": "2.0.0"
+      }
+    ],
+    "sources": [
+      {
+        "name": "source1",
+        "source": "deb url1 stable main",
+        "key_id": "0123456789ABCDEF",
+        "key_file": "public.key"
+      }
+    ],
+    "boot_cmdline": [
+      "command1",
+      "command2"
+    ],
+    "boot_config": [
+      "option1",
+      "option2"
+    ]
+  },
+  {
+    "name": "target2",
+    "version": "2.0.0",
+    "reference": "ref2",
+    "sources": [
+      {
+        "name": "source1",
+        "source": "deb url1 stable main",
+        "key_id": "0123456789ABCDEF",
+        "key_file": "public.key"
+      },
+      {
+        "name": "source2",
+        "source": "deb url2 stable main",
+        "key_id": "0123456789ABCDEF",
+        "key_server": "public.key"
+      }
+    ],
+    "packages": [
+      {
+        "package": "package1",
+        "version": "1.0.0"
+      },
+      {
+        "package": "package2",
+        "version": "2.0.0"
+      },
+      {
+        "package": "package3",
+        "version": "3.0.0"
+      }
+    ]
+  }
+]
