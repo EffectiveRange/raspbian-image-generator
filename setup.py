@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='raspbian-image-generator',
-    version='1.0.0',
+    version='1.0.1',
     description='Raspberry Pi image generator using the official pi-gen repository',
     author='Ferenc Nandor Janky & Attila Gombos',
     author_email='info@effective-range.com',
