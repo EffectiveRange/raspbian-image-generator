@@ -43,7 +43,7 @@ pip install .
 
 2. Install from distribution file
     ```bash
-    pip install dist/raspbian_image_generator-1.0.0.tar.gz
+    pip install dist/raspbian-image-generator-1.0.0.tar.gz
     ```
 
 3. Install from GitHub repository
@@ -136,10 +136,10 @@ Example configuration (example `target-config.json` config file content):
             "file_url": "https://github.com/EffectiveRange/elastic-beats-armhf-deb/releases/download/v8.12.2/filebeat-8.12.2-armv7l.deb"
          }
       ],
-      "boot_commands": [
+      "boot_cmdline": [
          "modules-load=dwc2,g_ether"
       ],
-      "boot_options": [
+      "boot_config": [
          "enable_uart=1",
          "dtoverlay=dwc2"
       ]
