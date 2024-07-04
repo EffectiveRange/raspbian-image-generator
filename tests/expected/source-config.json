@@ -1,0 +1,21 @@
+[
+  {
+    "name": "source1",
+    "source": "deb http://url1 stable main",
+    "key_id": "0123456789ABCDEF012345671111111111111111",
+    "key_file": "http://url1/dists/stable/public1.key",
+    "key_server": "keyserver.test1.com"
+  },
+  {
+    "name": "source2",
+    "source": "deb http://url2 stable main",
+    "key_id": "0123456789ABCDEF012345672222222222222222",
+    "key_file": "http://url2/dists/stable/public2.key"
+  },
+  {
+    "name": "source3",
+    "source": "deb http://url3 stable main",
+    "key_id": "0123456789ABCDEF012345673333333333333333",
+    "key_file": "/path/to/public3.key"
+  }
+]
