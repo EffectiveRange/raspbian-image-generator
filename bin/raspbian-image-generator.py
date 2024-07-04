@@ -16,7 +16,7 @@ from package_downloader import JsonLoader, FileDownloader, SessionProvider
 from package_installer import AptInstaller
 
 from image_generator import ImageGenerator, BuildConfigurator, ImageBuilder, BuildConfiguration, \
-    BuildInitializer
+    BuildInitializer, TargetConfig
 
 log = get_logger('ImageGeneratorApp')
 
@@ -50,7 +50,10 @@ def main() -> None:
     output_directory = os.path.abspath(arguments.output)
     image_generator = ImageGenerator(target_config, json_loader, build_initializer, image_builder, output_directory)
 
-    image_generator.generate(arguments.target_name)
+    config = image_generator.generate(arguments.target_name)
+
+    if arguments.version:
+        _generate_version_file(output_directory, config)
 
 
 def _get_arguments() -> Namespace:
@@ -63,6 +66,7 @@ def _get_arguments() -> Namespace:
     parser.add_argument('-u', '--repository-url', help='repository URL',
                         default='https://github.com/RPi-Distro/pi-gen.git')
     parser.add_argument('-o', '--output', help='output image directory', default='images')
+    parser.add_argument('--version', help='create a version file', action=BooleanOptionalAction, default=False)
 
     parser.add_argument('-t', '--config-template', help='pi-gen config template', default='config/config.template')
     parser.add_argument('-c', '--compression', help='output image compression', default='xz')
@@ -90,6 +94,11 @@ def _initialize_repository(repo_path: str, repo_url: str) -> Repo:
         repo.git.reset('--hard', 'HEAD')
         repo.git.clean('-df')
         return repo
+
+
+def _generate_version_file(output_directory: str, config: TargetConfig) -> None:
+    with open(f'{output_directory}/{config.name}.version', 'w') as version_file:
+        version_file.write(config.version)
 
 
 if __name__ == '__main__':
