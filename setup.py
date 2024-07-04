@@ -8,6 +8,9 @@ setup(
     author_email='info@effective-range.com',
     packages=['image_generator'],
     scripts=['bin/raspbian-image-generator.py'],
+    data_files=[
+        ('config', ['config/config.template']),
+        ('scripts', ['scripts/00-packages', 'scripts/01-run.sh'])],
     install_requires=['GitPython', 'jinja2', 'pydantic',
                       'python-context-logger@git+https://github.com/EffectiveRange/python-context-logger.git@latest',
                       'debian-package-installer'
