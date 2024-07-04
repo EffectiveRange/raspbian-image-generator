@@ -76,6 +76,8 @@ options:
                         repository URL (default: https://github.com/RPi-Distro/pi-gen.git)
   -o OUTPUT, --output OUTPUT
                         output image directory (default: images)
+  --version, --no-version
+                        create a version file (default: False)
   -t CONFIG_TEMPLATE, --config-template CONFIG_TEMPLATE
                         pi-gen config template (default: config/config.template)
   -c COMPRESSION, --compression COMPRESSION
@@ -192,5 +194,5 @@ Output:
 2024-07-04T10:41:06.298238Z [info     ] Command execution completed    [ImageBuilder] app_version=0.1.0 application=raspbian-image-generator command=./build.sh elapsed_time=493.999s hostname=Legion7iPro return_code=0
 2024-07-04T10:41:06.298498Z [info     ] Image build completed          [ImageBuilder] app_version=0.1.0 application=raspbian-image-generator command=./build.sh hostname=Legion7iPro path=/tmp/pi-gen
 2024-07-04T10:41:06.298731Z [info     ] Image found                    [ImageGenerator] app_version=0.1.0 application=raspbian-image-generator hostname=Legion7iPro image=/tmp/pi-gen/deploy/image_2024-07-04-edge-pi-zero-lite.img.xz
-2024-07-04T10:41:06.298889Z [info     ] Moving image                   [ImageGenerator] app_version=0.1.0 application=raspbian-image-generator hostname=Legion7iPro source=/tmp/pi-gen/deploy/image_2024-07-04-edge-pi-zero-lite.img.xz target=/home/attilagombos/EffectiveRange/raspbian-image-generator/images/edge-pi-zero_0.2.1.img.xz
+2024-07-04T10:41:06.298889Z [info     ] Moving image                   [ImageGenerator] app_version=0.1.0 application=raspbian-image-generator hostname=Legion7iPro source=/tmp/pi-gen/deploy/image_2024-07-04-edge-pi-zero-lite.img.xz target=/home/attilagombos/EffectiveRange/raspbian-image-generator/images/edge-pi-zero-0.2.1.img.xz
 ```

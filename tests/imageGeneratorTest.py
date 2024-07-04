@@ -27,23 +27,24 @@ class ImageGeneratorTest(TestCase):
 
     def test_image_successfully_generated(self) -> None:
         # Given
-        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', sources=[], packages=[])
+        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', packages=[])
         json_loader, initializer, builder = create_mocks(config)
         image_generator = ImageGenerator('/path/to/config', json_loader, initializer, builder, self.OUTPUT_DIR)
         subprocess.run(['/bin/bash', f'{TEST_RESOURCE_ROOT}/scripts/build.sh', '0', f'{self.PI_GEN_LOCATION}'])
 
         # When
-        image_generator.generate('test-target')
+        result = image_generator.generate('test-target')
 
         # Then
+        self.assertEqual(config, result)
         json_loader.load_list.assert_called_once()
         initializer.initialize.assert_called_once_with(config)
         builder.build.assert_called_once()
-        self.assertTrue(os.path.exists(f'{TEST_RESOURCE_ROOT}/images/test-target_1.0.0.img.xz'))
+        self.assertTrue(os.path.exists(f'{TEST_RESOURCE_ROOT}/images/test-target-1.0.0.img.xz'))
 
     def test_raises_error_when_target_not_found(self) -> None:
         # Given
-        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', sources=[], packages=[])
+        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', packages=[])
         json_loader, initializer, builder = create_mocks(config)
         image_generator = ImageGenerator('/path/to/config', json_loader, initializer, builder, self.OUTPUT_DIR)
 
@@ -57,7 +58,7 @@ class ImageGeneratorTest(TestCase):
 
     def test_raises_error_when_image_not_found(self):
         # Given
-        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', sources=[], packages=[])
+        config = TargetConfig(name='test-target', version='1.0.0', reference='test-ref', packages=[])
         json_loader, initializer, builder = create_mocks(config)
         image_generator = ImageGenerator('/path/to/config', json_loader, initializer, builder, self.OUTPUT_DIR)
 

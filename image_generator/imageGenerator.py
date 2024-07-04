@@ -18,7 +18,7 @@ class ImageGenerator(object):
 
     def __init__(self, config_path: str, json_loader: IJsonLoader, initializer: IBuildInitializer,
                  image_builder: IImageBuilder, output_dir: str,
-                 output_pattern: str = '{target}_{version}.{type}') -> None:
+                 output_pattern: str = '{target}-{version}') -> None:
         self._config_path = config_path
         self._json_loader = json_loader
         self._initializer = initializer
@@ -26,7 +26,7 @@ class ImageGenerator(object):
         self._output_dir = output_dir
         self._output_pattern = output_pattern
 
-    def generate(self, target_name: str) -> None:
+    def generate(self, target_name: str) -> TargetConfig:
         config = self._get_config(target_name)
 
         self._initializer.initialize(config)
@@ -38,6 +38,8 @@ class ImageGenerator(object):
         self._check_result(image_path)
 
         self._move_image(image_path, config)
+
+        return config
 
     def _get_config(self, target_name: str) -> TargetConfig:
         log.info('Loading target configuration', target=target_name)
@@ -69,8 +71,8 @@ class ImageGenerator(object):
 
     def _move_image(self, image_path: str, config: TargetConfig) -> None:
         file_type = self._get_file_type()
-        image_name = self._output_pattern.format(target=config.name, version=config.version, type=file_type)
-        target_image_path = f'{self._output_dir}/{image_name}'
+        image_name = self._output_pattern.format(target=config.name, version=config.version)
+        target_image_path = f'{self._output_dir}/{image_name}.{file_type}'
 
         log.info('Moving image', source=image_path, target=target_image_path)
 
