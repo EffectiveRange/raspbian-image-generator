@@ -40,7 +40,7 @@ class ImageGeneratorTest(TestCase):
         json_loader.load_list.assert_called_once()
         initializer.initialize.assert_called_once_with(config)
         builder.build.assert_called_once()
-        self.assertTrue(os.path.exists(f'{TEST_RESOURCE_ROOT}/images/test-target-1.0.0.img.xz'))
+        self.assertTrue(os.path.exists(f'{TEST_RESOURCE_ROOT}/images/test-target/1.0.0/test-target-1.0.0.img.xz'))
 
     def test_raises_error_when_target_not_found(self) -> None:
         # Given

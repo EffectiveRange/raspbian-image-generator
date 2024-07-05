@@ -75,9 +75,7 @@ options:
   -u REPOSITORY_URL, --repository-url REPOSITORY_URL
                         repository URL (default: https://github.com/RPi-Distro/pi-gen.git)
   -o OUTPUT, --output OUTPUT
-                        output image directory (default: images)
-  --version, --no-version
-                        create a version file (default: False)
+                        output image directory (default: image)
   -t CONFIG_TEMPLATE, --config-template CONFIG_TEMPLATE
                         pi-gen config template (default: config/config.template)
   -c COMPRESSION, --compression COMPRESSION
