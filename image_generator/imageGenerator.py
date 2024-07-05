@@ -84,6 +84,11 @@ class ImageGenerator(object):
 
         shutil.move(image_path, target_image_path)
 
+        export_path = f'{output_path}/{image_name}.json'
+        log.info('Exporting target configuration to file', file=export_path)
+
+        self._export_config(export_path, config)
+
     def _get_file_type(self) -> str:
         compression_to_file_type = {
             'none': 'img',
@@ -95,3 +100,7 @@ class ImageGenerator(object):
         compression = self._initializer.get_configuration().compression
 
         return compression_to_file_type.get(compression, 'img')
+
+    def _export_config(self, config_path: str, config: TargetConfig) -> None:
+        with open(config_path, 'w') as config_file:
+            config_file.write(f'{config.model_dump_json(indent=2, exclude_none=True)}\n')

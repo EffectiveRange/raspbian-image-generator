@@ -1,0 +1,14 @@
+{
+  "name": "test-target",
+  "version": "1.0.0",
+  "reference": "test-ref",
+  "stage": 2,
+  "packages": [
+    {
+      "package": "package1"
+    },
+    {
+      "package": "package2"
+    }
+  ]
+}

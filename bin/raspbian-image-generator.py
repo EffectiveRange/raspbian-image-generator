@@ -15,8 +15,7 @@ from git import Repo
 from package_downloader import JsonLoader, FileDownloader, SessionProvider
 from package_installer import AptInstaller
 
-from image_generator import ImageGenerator, BuildConfigurator, ImageBuilder, BuildConfiguration, \
-    BuildInitializer, TargetConfig
+from image_generator import ImageGenerator, BuildConfigurator, ImageBuilder, BuildConfiguration, BuildInitializer
 
 log = get_logger('ImageGeneratorApp')
 
@@ -90,11 +89,6 @@ def _initialize_repository(repo_path: str, repo_url: str) -> Repo:
         repo.git.reset('--hard', 'HEAD')
         repo.git.clean('-df')
         return repo
-
-
-def _generate_version_file(output_directory: str, config: TargetConfig) -> None:
-    with open(f'{output_directory}/{config.name}.version', 'w') as version_file:
-        version_file.write(config.version)
 
 
 if __name__ == '__main__':
