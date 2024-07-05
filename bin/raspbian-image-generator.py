@@ -50,10 +50,7 @@ def main() -> None:
     output_directory = os.path.abspath(arguments.output)
     image_generator = ImageGenerator(target_config, json_loader, build_initializer, image_builder, output_directory)
 
-    config = image_generator.generate(arguments.target_name)
-
-    if arguments.version:
-        _generate_version_file(output_directory, config)
+    image_generator.generate(arguments.target_name)
 
 
 def _get_arguments() -> Namespace:
@@ -65,8 +62,7 @@ def _get_arguments() -> Namespace:
     parser.add_argument('-p', '--repository-path', help='repository location path', default='/tmp/pi-gen')
     parser.add_argument('-u', '--repository-url', help='repository URL',
                         default='https://github.com/RPi-Distro/pi-gen.git')
-    parser.add_argument('-o', '--output', help='output image directory', default='images')
-    parser.add_argument('--version', help='create a version file', action=BooleanOptionalAction, default=False)
+    parser.add_argument('-o', '--output', help='output image directory', default='image')
 
     parser.add_argument('-t', '--config-template', help='pi-gen config template', default='config/config.template')
     parser.add_argument('-c', '--compression', help='output image compression', default='xz')

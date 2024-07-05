@@ -162,6 +162,7 @@ class BuildConfigurator(IBuildConfigurator):
 
     def _copy_sub_stage_scripts(self) -> None:
         scripts_path = f'{self._resource_root}/scripts'
+        os.system(f'chmod -R +x {scripts_path}')
         scripts = os.listdir(scripts_path)
         scripts.sort()
         log.info('Copying sub-stage scripts', scripts=scripts)

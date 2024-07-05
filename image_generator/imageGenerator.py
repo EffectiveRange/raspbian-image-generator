@@ -72,11 +72,12 @@ class ImageGenerator(object):
     def _move_image(self, image_path: str, config: TargetConfig) -> None:
         file_type = self._get_file_type()
         image_name = self._output_pattern.format(target=config.name, version=config.version)
-        target_image_path = f'{self._output_dir}/{image_name}.{file_type}'
+        output_path = f'{self._output_dir}/{config.name}/{config.version}'
+        target_image_path = f'{output_path}/{image_name}.{file_type}'
 
         log.info('Moving image', source=image_path, target=target_image_path)
 
-        os.makedirs(self._output_dir, exist_ok=True)
+        os.makedirs(output_path, exist_ok=True)
 
         if os.path.exists(target_image_path):
             os.unlink(target_image_path)
