@@ -63,7 +63,7 @@ def _get_arguments() -> Namespace:
                         default='https://github.com/RPi-Distro/pi-gen.git')
     parser.add_argument('-o', '--output', help='output image directory', default='image')
 
-    parser.add_argument('-t', '--config-template', help='pi-gen config template', default='config/config.template')
+    parser.add_argument('-t', '--config-template', help='pi-gen config template', default='template/config')
     parser.add_argument('-c', '--compression', help='output image compression', default='xz')
     parser.add_argument('--enable-ssh', help='enable SSH access', action=BooleanOptionalAction, default=True)
     parser.add_argument('--clean-build', help='clean before build', action=BooleanOptionalAction, default=True)

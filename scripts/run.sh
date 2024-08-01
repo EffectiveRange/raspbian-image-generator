@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 # SPDX-FileCopyrightText: 2024 Ferenc Nandor Janky <ferenj@effective-range.com>
 # SPDX-FileCopyrightText: 2024 Attila Gombos <attila.gombos@effective-range.com>
@@ -7,6 +7,7 @@
 cp files/*.json "${ROOTFS_DIR}/tmp/"
 
 on_chroot << EOF
+#!/bin/bash -ex
 
 python -m venv /tmp/venv
 
