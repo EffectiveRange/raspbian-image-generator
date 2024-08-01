@@ -42,6 +42,7 @@ class BuildConfigurator(IBuildConfigurator):
         self._configuration = configuration
         self._sub_stage_name = sub_stage_name
         self._temp_sub_stage = f'{self._resource_root}/build/{self._sub_stage_name}'
+        self._script_index = 0
 
     def get_configuration(self) -> BuildConfiguration:
         return self._configuration
@@ -91,11 +92,20 @@ class BuildConfigurator(IBuildConfigurator):
     def _build_sub_stage(self, config: TargetConfig) -> None:
         log.info('Creating sub-stage', stage=f'stage{config.stage}', sub_stage=self._temp_sub_stage)
 
-        os.makedirs(self._temp_sub_stage, exist_ok=True)
+        shutil.rmtree(self._temp_sub_stage, ignore_errors=True)
+        os.makedirs(self._temp_sub_stage)
 
         self._create_config_files(config)
 
-        self._copy_sub_stage_scripts()
+        self._copy_sub_stage_script('packages')
+
+        if config.pre_install:
+            self._create_custom_script(config.pre_install)
+
+        self._copy_sub_stage_script('run.sh')
+
+        if config.post_install:
+            self._create_custom_script(config.post_install)
 
     def _append_stage(self, stage: int) -> None:
         new_sub_stage_dir = self._create_sub_stage_dir(stage)
@@ -160,13 +170,16 @@ class BuildConfigurator(IBuildConfigurator):
 
         self._create_config_file(package_config_path, config.packages)
 
-    def _copy_sub_stage_scripts(self) -> None:
-        scripts_path = f'{self._resource_root}/scripts'
-        os.system(f'chmod -R +x {scripts_path}')
-        scripts = os.listdir(scripts_path)
-        scripts.sort()
-        log.info('Copying sub-stage scripts', scripts=scripts)
-        shutil.copytree(scripts_path, self._temp_sub_stage, dirs_exist_ok=True)
+    def _copy_sub_stage_script(self, script_name: str) -> None:
+        source_path = f'{self._resource_root}/scripts/{script_name}'
+        target_path = f'{self._temp_sub_stage}/{self._script_index:02}-{script_name}'
+
+        log.info('Copying sub-stage script', source=source_path, target=target_path)
+
+        shutil.copyfile(source_path, target_path)
+        os.system(f'chmod +x {target_path}')
+
+        self._script_index += 1
 
     def _copy_build_files(self, new_sub_stage_dir: str) -> None:
         shutil.copytree(self._temp_sub_stage, new_sub_stage_dir, dirs_exist_ok=True)
@@ -175,3 +188,16 @@ class BuildConfigurator(IBuildConfigurator):
         with open(config_path, 'w') as config_file:
             type_adapter = TypeAdapter(config_list.__class__)
             config_file.write(f'{type_adapter.dump_json(config_list, indent=2, exclude_none=True).decode()}\n')
+
+    def _create_custom_script(self, commands: list[str]) -> None:
+        script_path = f'{self._temp_sub_stage}/{self._script_index:02}-run-chroot.sh'
+
+        log.info('Creating custom script', script=script_path)
+
+        with open(script_path, 'w') as script_file:
+            script_file.write('#!/bin/bash -ex\n\n')
+            script_file.write('\n'.join(commands) + '\n')
+
+        os.system(f'chmod +x {script_path}')
+
+        self._script_index += 1

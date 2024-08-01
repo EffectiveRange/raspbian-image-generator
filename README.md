@@ -7,17 +7,18 @@ Raspberry Pi OS image generator using the official pi-gen repository
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-  - [Install from source root directory](#install-from-source-root-directory)
-  - [Install from source distribution](#install-from-source-distribution)
+    - [Install from source root directory](#install-from-source-root-directory)
+    - [Install from source distribution](#install-from-source-distribution)
 - [Usage](#usage)
-  - [Command line reference](#command-line-reference)
-  - [Example](#example)
+    - [Command line reference](#command-line-reference)
+    - [Example](#example)
 
 ## Features
 
 - [x] Generate Raspberry Pi OS images
 - [x] Install additional packages into the image
-- [x] Customize the image before building
+- [x] Customize boot options (cmdline.txt, config.txt)
+- [x] Run custom commands before and/or after installing the packages
 
 ## Requirements
 
@@ -98,52 +99,58 @@ Example configuration (example `target-config.json` config file content):
 
 ```json
 [
-   {
-      "name": "edge-pi-zero",
-      "version": "0.2.1",
-      "reference": "2024-03-12-raspios-bullseye",
-      "sources": [
-         {
-            "name": "effective-range",
-            "source": "deb http://aptrepo.effective-range.com stable main",
-            "key_id": "C1AEE2EDBAEC37595801DDFAE15BC62117A4E0F3",
-            "key_file": "http://aptrepo.effective-range.com/dists/stable/public.key",
-            "key_server": "keyserver.ubuntu.com"
-         }
-      ],
-      "packages": [
-         {
-            "package": "wifi-manager",
-            "release": {
-               "owner": "EffectiveRange",
-               "repo": "wifi-manager",
-               "tag": "latest",
-               "matcher": "*armhf.deb"
-            }
-         },
-         {
-            "package": "picprogrammer",
-            "release": {
-               "owner": "EffectiveRange",
-               "repo": "pic18-q20-programmer",
-               "tag": "v0.3.0",
-               "matcher": "*armhf.deb"
-            }
-         },
-         {
-            "package": "filebeat",
-            "version": "8.12.2",
-            "file_url": "https://github.com/EffectiveRange/elastic-beats-armhf-deb/releases/download/v8.12.2/filebeat-8.12.2-armv7l.deb"
-         }
-      ],
-      "boot_cmdline": [
-         "modules-load=dwc2,g_ether"
-      ],
-      "boot_config": [
-         "enable_uart=1",
-         "dtoverlay=dwc2"
-      ]
-   }
+  {
+    "name": "edge-pi-zero",
+    "version": "0.2.1",
+    "reference": "2024-03-12-raspios-bullseye",
+    "sources": [
+      {
+        "name": "effective-range",
+        "source": "deb http://aptrepo.effective-range.com stable main",
+        "key_id": "C1AEE2EDBAEC37595801DDFAE15BC62117A4E0F3",
+        "key_file": "http://aptrepo.effective-range.com/dists/stable/public.key",
+        "key_server": "keyserver.ubuntu.com"
+      }
+    ],
+    "packages": [
+      {
+        "package": "wifi-manager",
+        "release": {
+          "owner": "EffectiveRange",
+          "repo": "wifi-manager",
+          "tag": "latest",
+          "matcher": "*armhf.deb"
+        }
+      },
+      {
+        "package": "picprogrammer",
+        "release": {
+          "owner": "EffectiveRange",
+          "repo": "pic18-q20-programmer",
+          "tag": "v0.3.0",
+          "matcher": "*armhf.deb"
+        }
+      },
+      {
+        "package": "filebeat",
+        "version": "8.12.2",
+        "file_url": "https://github.com/EffectiveRange/elastic-beats-armhf-deb/releases/download/v8.12.2/filebeat-8.12.2-armv7l.deb"
+      }
+    ],
+    "boot_cmdline": [
+      "modules-load=dwc2,g_ether"
+    ],
+    "boot_config": [
+      "enable_uart=1",
+      "dtoverlay=dwc2"
+    ],
+    "pre_install": [
+      "echo 'Pre-install script'"
+    ],
+    "post_install": [
+      "echo 'Post-install script'"
+    ]
+  }
 ]
 ```
 

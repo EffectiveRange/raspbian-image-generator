@@ -18,3 +18,5 @@ class TargetConfig(BaseModel):
     sources: Optional[list[SourceConfig]] = None
     boot_cmdline: Optional[list[str]] = None
     boot_config: Optional[list[str]] = None
+    pre_install: Optional[list[str]] = None
+    post_install: Optional[list[str]] = None
