@@ -51,6 +51,8 @@ class ImageGenerator(object):
             log.error('Target configuration not found', target=target_name, target_list=list(config_map.keys()))
             raise AttributeError('Invalid target name or configuration list')
 
+        log.info('Target configuration loaded', target=target_name, version=target.version)
+
         return target
 
     def _get_image_path(self, config: TargetConfig) -> str:

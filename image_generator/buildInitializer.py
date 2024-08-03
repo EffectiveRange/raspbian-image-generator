@@ -57,6 +57,8 @@ class BuildInitializer(IBuildInitializer):
 
         with open(dependency_list, 'r') as file:
             dependencies = file.readlines()
+            dependencies.append('binfmt-support')
+
             for dependency in dependencies:
                 if ':' in dependency:
                     dependency = dependency.split(':')[1]
