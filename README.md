@@ -18,6 +18,7 @@ Raspberry Pi OS image generator using the official pi-gen repository
 - [x] Generate Raspberry Pi OS images
 - [x] Install additional packages into the image
 - [x] Customize boot options (cmdline.txt, config.txt)
+- [x] Run commands on first boot of the image
 - [x] Run custom commands before and/or after installing the packages
 
 ## Requirements
@@ -56,7 +57,7 @@ pip install .
 
 ### Command line reference
 
-```commandline
+```bash
 usage: raspbian-image-generator.py [-h] [-f LOG_FILE] [-l LOG_LEVEL] [-d DOWNLOAD] [-p REPOSITORY_PATH] [-u REPOSITORY_URL] [-o OUTPUT] [-t CONFIG_TEMPLATE] [-c COMPRESSION] [--enable-ssh | --no-enable-ssh] [--clean-build | --no-clean-build] target_config target_name
 
 positional arguments:
@@ -91,7 +92,7 @@ options:
 
 Needs root privileges!
 
-```commandline
+```bash
 $ sudo bin/raspbian-image-generator.py edge-pi-zero -t ~/config/target-config.json
 ```
 
@@ -144,6 +145,9 @@ Example configuration (example `target-config.json` config file content):
       "enable_uart=1",
       "dtoverlay=dwc2"
     ],
+    "first_boot": [
+      "echo 'First boot script'"
+    ],
     "pre_install": [
       "echo 'Pre-install script'"
     ],
@@ -156,7 +160,7 @@ Example configuration (example `target-config.json` config file content):
 
 Output:
 
-```commandline
+```bash
 2024-07-04T10:32:52.190664Z [info     ] Started image generation       [ImageGeneratorApp] app_version=0.1.0 application=raspbian-image-generator arguments={'log_file': None, 'log_level': 'INFO', 'download': '/tmp/config', 'repository_path': '/tmp/pi-gen', 'repository_url': 'https://github.com/RPi-Distro/pi-gen.git', 'output': 'images', 'config_template': 'config/config.template', 'compression': 'xz', 'enable_ssh': True, 'clean_build': False, 'target_config': 'build/target-config.json', 'target_name': 'edge-pi-zero'} hostname=Legion7iPro target=edge-pi-zero
 2024-07-04T10:32:52.191064Z [info     ] Cleaning existing repository   [ImageGeneratorApp] app_version=0.1.0 application=raspbian-image-generator hostname=Legion7iPro path=/tmp/pi-gen repository=https://github.com/RPi-Distro/pi-gen.git
 2024-07-04T10:32:52.194713Z [info     ] Local file path provided, skipping download [FileDownloader] app_version=0.1.0 application=raspbian-image-generator file=/home/attilagombos/EffectiveRange/raspbian-image-generator/build/target-config.json hostname=Legion7iPro

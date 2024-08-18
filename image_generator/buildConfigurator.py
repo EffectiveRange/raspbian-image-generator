@@ -35,8 +35,13 @@ class IBuildConfigurator(object):
 
 class BuildConfigurator(IBuildConfigurator):
 
-    def __init__(self, resource_root: str, repository_location: str, configuration: BuildConfiguration,
-                 sub_stage_name: str = 'install-packages') -> None:
+    def __init__(
+        self,
+        resource_root: str,
+        repository_location: str,
+        configuration: BuildConfiguration,
+        sub_stage_name: str = 'install-packages',
+    ) -> None:
         self._resource_root = resource_root
         self._repository_location = repository_location
         self._configuration = configuration
@@ -107,6 +112,9 @@ class BuildConfigurator(IBuildConfigurator):
         if config.post_install:
             self._create_custom_script(config.post_install)
 
+        if config.first_boot:
+            self._insert_first_boot_script(config.first_boot)
+
     def _append_stage(self, stage: int) -> None:
         new_sub_stage_dir = self._create_sub_stage_dir(stage)
 
@@ -121,7 +129,7 @@ class BuildConfigurator(IBuildConfigurator):
             'compression': self._configuration.compression,
             'enable_ssh': self._configuration.enable_ssh,
             'clean_build': self._configuration.clean_build,
-            'stage_list': ' '.join([f'stage{i}' for i in range(config.stage + 1)])
+            'stage_list': ' '.join([f'stage{i}' for i in range(config.stage + 1)]),
         }
 
         build_config = render_template_file(self._resource_root, self._configuration.template, context)
@@ -201,3 +209,19 @@ class BuildConfigurator(IBuildConfigurator):
         os.system(f'chmod +x {script_path}')
 
         self._script_index += 1
+
+    def _insert_first_boot_script(self, first_boot: list[str]) -> None:
+        script_path = '/usr/lib/raspberrypi-sys-mods/firstboot'
+        insert_before = '^reboot_pi$'
+
+        bash_script = [f'FIRSTBOOT="{script_path}"\n']
+
+        first_boot.append('\\\\')
+
+        for line in first_boot:
+            escaped_line = line.replace("'", "'\\''")
+            bash_script.append(f"sed -i '/{insert_before}/i {escaped_line}' \"$FIRSTBOOT\"")
+
+        log.info('Inserting commands into first boot script', script=script_path)
+
+        self._create_custom_script(bash_script)
