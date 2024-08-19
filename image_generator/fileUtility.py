@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import os
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -13,7 +14,7 @@ def write_file(file_path: str, content: str) -> None:
         file.write(content)
 
 
-def render_template_file(resource_root: str, template_file: str, context: dict[str, str]) -> str:
+def render_template_file(resource_root: str, template_file: str, context: dict[str, Any]) -> str:
     template_path = f'{resource_root}/{template_file}'
     environment = Environment(loader=FileSystemLoader(os.path.dirname(template_path)))
     template = environment.get_template(os.path.basename(template_path))

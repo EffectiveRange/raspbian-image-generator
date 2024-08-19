@@ -9,10 +9,14 @@ setup(
     packages=['image_generator'],
     scripts=['bin/raspbian-image-generator.py'],
     data_files=[
-        ('template', ['template/config']),
-        ('scripts', ['scripts/packages', 'scripts/run.sh'])],
-    install_requires=['GitPython', 'jinja2', 'pydantic',
-                      'python-context-logger@git+https://github.com/EffectiveRange/python-context-logger.git@latest',
-                      'debian-package-installer'
-                      '@git+https://github.com/EffectiveRange/debian-package-installer.git@latest']
+        ('template', ['template/config.j2', 'template/first_boot.j2']),
+        ('scripts', ['scripts/packages', 'scripts/run.sh']),
+    ],
+    install_requires=[
+        'GitPython',
+        'jinja2',
+        'pydantic',
+        'python-context-logger@git+https://github.com/EffectiveRange/python-context-logger.git@latest',
+        'debian-package-installer' '@git+https://github.com/EffectiveRange/debian-package-installer.git@latest',
+    ],
 )

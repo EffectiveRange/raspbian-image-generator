@@ -17,11 +17,19 @@ log = get_logger('BuildConfigurator')
 
 class BuildConfiguration(object):
 
-    def __init__(self, compression: str, enable_ssh: bool, clean_build: bool, template: str) -> None:
+    def __init__(
+        self,
+        compression: str,
+        enable_ssh: bool,
+        clean_build: bool,
+        config_template: str,
+        first_boot_template: str = 'template/first_boot.j2',
+    ) -> None:
         self.compression = compression
         self.enable_ssh = '1' if enable_ssh else '0'
         self.clean_build = '1' if clean_build else '0'
-        self.template = template
+        self.config_template = config_template
+        self.first_boot_template = first_boot_template
 
 
 class IBuildConfigurator(object):
@@ -35,8 +43,13 @@ class IBuildConfigurator(object):
 
 class BuildConfigurator(IBuildConfigurator):
 
-    def __init__(self, resource_root: str, repository_location: str, configuration: BuildConfiguration,
-                 sub_stage_name: str = 'install-packages') -> None:
+    def __init__(
+        self,
+        resource_root: str,
+        repository_location: str,
+        configuration: BuildConfiguration,
+        sub_stage_name: str = 'install-packages',
+    ) -> None:
         self._resource_root = resource_root
         self._repository_location = repository_location
         self._configuration = configuration
@@ -107,6 +120,9 @@ class BuildConfigurator(IBuildConfigurator):
         if config.post_install:
             self._create_custom_script(config.post_install)
 
+        if config.first_boot:
+            self._insert_first_boot_script(config.first_boot)
+
     def _append_stage(self, stage: int) -> None:
         new_sub_stage_dir = self._create_sub_stage_dir(stage)
 
@@ -121,13 +137,14 @@ class BuildConfigurator(IBuildConfigurator):
             'compression': self._configuration.compression,
             'enable_ssh': self._configuration.enable_ssh,
             'clean_build': self._configuration.clean_build,
-            'stage_list': ' '.join([f'stage{i}' for i in range(config.stage + 1)])
+            'stage_list': ' '.join([f'stage{i}' for i in range(config.stage + 1)]),
         }
 
-        build_config = render_template_file(self._resource_root, self._configuration.template, context)
-
+        build_config = render_template_file(self._resource_root, self._configuration.config_template, context)
         config_path = f'{self._repository_location}/config'
+
         log.info('Creating build config file', file=config_path)
+
         write_file(config_path, build_config)
 
     def _create_sub_stage_dir(self, target_stage: int) -> str:
@@ -192,7 +209,7 @@ class BuildConfigurator(IBuildConfigurator):
     def _create_custom_script(self, commands: list[str]) -> None:
         script_path = f'{self._temp_sub_stage}/{self._script_index:02}-run-chroot.sh'
 
-        log.info('Creating custom script', script=script_path)
+        log.info('Creating custom script', script=script_path, commands=commands)
 
         with open(script_path, 'w') as script_file:
             script_file.write('#!/bin/bash -ex\n\n')
@@ -201,3 +218,14 @@ class BuildConfigurator(IBuildConfigurator):
         os.system(f'chmod +x {script_path}')
 
         self._script_index += 1
+
+    def _insert_first_boot_script(self, commands: list[str]) -> None:
+        context = {'commands': commands}
+
+        first_boot = render_template_file(self._resource_root, self._configuration.first_boot_template, context)
+
+        script_path = f'{self._repository_location}/stage2/01-sys-tweaks/files/rc.local'
+
+        log.info('Creating script to run on first boot', script=script_path, commands=commands)
+
+        write_file(script_path, first_boot)

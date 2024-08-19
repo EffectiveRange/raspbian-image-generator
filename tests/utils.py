@@ -62,6 +62,12 @@ def create_pi_gen_tree(pi_gen_path: str) -> None:
     os.makedirs(stage_2_sub_stage_00_path, exist_ok=True)
     stage_2_sub_stage_01_path = f'{stage_2_path}/01-sys-tweaks'
     os.makedirs(stage_2_sub_stage_01_path, exist_ok=True)
-    copy_file(f'{TEST_RESOURCE_ROOT}/config/07-resize-init.diff',
-              f'{pi_gen_path}/stage2/01-sys-tweaks/00-patches/07-resize-init.diff')
+    copy_file(
+        f'{TEST_RESOURCE_ROOT}/config/07-resize-init.diff',
+        f'{pi_gen_path}/stage2/01-sys-tweaks/00-patches/07-resize-init.diff',
+    )
+    copy_file(
+        f'{TEST_RESOURCE_ROOT}/config/rc.local',
+        f'{pi_gen_path}/stage2/01-sys-tweaks/files/rc.local',
+    )
     copy_file(f'{TEST_RESOURCE_ROOT}/config/depends', pi_gen_path)

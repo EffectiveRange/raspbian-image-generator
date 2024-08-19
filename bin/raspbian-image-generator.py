@@ -40,8 +40,9 @@ def main() -> None:
     apt_cache = Cache()
     apt_installer = AptInstaller(apt_cache)
 
-    configuration = BuildConfiguration(arguments.compression, arguments.enable_ssh, arguments.clean_build,
-                                       arguments.config_template)
+    configuration = BuildConfiguration(
+        arguments.compression, arguments.enable_ssh, arguments.clean_build, arguments.config_template
+    )
     configurator = BuildConfigurator(resource_root, repository_location, configuration)
     image_builder = ImageBuilder(repository_location)
 
@@ -59,11 +60,12 @@ def _get_arguments() -> Namespace:
 
     parser.add_argument('-d', '--download', help='target config download location', default='/tmp/config')
     parser.add_argument('-p', '--repository-path', help='repository location path', default='/tmp/pi-gen')
-    parser.add_argument('-u', '--repository-url', help='repository URL',
-                        default='https://github.com/RPi-Distro/pi-gen.git')
+    parser.add_argument(
+        '-u', '--repository-url', help='repository URL', default='https://github.com/RPi-Distro/pi-gen.git'
+    )
     parser.add_argument('-o', '--output', help='output image directory', default='image')
 
-    parser.add_argument('-t', '--config-template', help='pi-gen config template', default='template/config')
+    parser.add_argument('-t', '--config-template', help='pi-gen config template', default='template/config.j2')
     parser.add_argument('-c', '--compression', help='output image compression', default='xz')
     parser.add_argument('--enable-ssh', help='enable SSH access', action=BooleanOptionalAction, default=True)
     parser.add_argument('--clean-build', help='clean before build', action=BooleanOptionalAction, default=True)
