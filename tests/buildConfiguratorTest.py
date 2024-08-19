@@ -24,7 +24,7 @@ class BuildConfiguratorTest(TestCase):
 
     def test_build_configuration_generated(self) -> None:
         # Given
-        configuration = BuildConfiguration('xz', True, True, 'template/config')
+        configuration = BuildConfiguration('xz', True, True, '../template/config.j2')
         build_configurator = BuildConfigurator(TEST_RESOURCE_ROOT, self.PI_GEN_LOCATION, configuration)
         config = create_target_config()
 
@@ -54,7 +54,7 @@ class BuildConfiguratorTest(TestCase):
 
     def test_build_configuration_generated_with_custom_boot_options(self) -> None:
         # Given
-        configuration = BuildConfiguration('xz', True, True, 'template/config')
+        configuration = BuildConfiguration('xz', True, True, '../template/config.j2')
         build_configurator = BuildConfigurator(TEST_RESOURCE_ROOT, self.PI_GEN_LOCATION, configuration)
         config = create_target_config()
         config.boot_cmdline = ['option1', 'option2']
@@ -86,7 +86,7 @@ class BuildConfiguratorTest(TestCase):
 
     def test_build_configuration_generated_with_custom_commands(self) -> None:
         # Given
-        configuration = BuildConfiguration('xz', True, True, 'template/config')
+        configuration = BuildConfiguration('xz', True, True, '../template/config.j2')
         build_configurator = BuildConfigurator(TEST_RESOURCE_ROOT, self.PI_GEN_LOCATION, configuration)
         config = create_target_config()
         config.pre_install = ['cmd1', 'cmd2']
@@ -111,10 +111,10 @@ class BuildConfiguratorTest(TestCase):
 
     def test_build_configuration_generated_first_boot_commands(self) -> None:
         # Given
-        configuration = BuildConfiguration('xz', True, True, 'template/config')
+        configuration = BuildConfiguration('xz', True, True, '../template/config.j2', '../template/first_boot.j2')
         build_configurator = BuildConfigurator(TEST_RESOURCE_ROOT, self.PI_GEN_LOCATION, configuration)
         config = create_target_config()
-        config.first_boot = ['cmd1 "test1"', "cmd2 'test2'"]
+        config.first_boot = ['cmd1', 'cmd2']
 
         # When
         build_configurator.configure(config)
@@ -123,10 +123,12 @@ class BuildConfiguratorTest(TestCase):
         generated_stage_path = f'{self.PI_GEN_LOCATION}/stage2/02-install-packages'
         self.assertTrue(os.path.exists(f'{generated_stage_path}/00-packages'))
         self.assertTrue(os.path.exists(f'{generated_stage_path}/01-run.sh'))
-        self.assertTrue(os.path.exists(f'{generated_stage_path}/02-run-chroot.sh'))
 
         self.assertTrue(
-            compare_files(f'{TEST_RESOURCE_ROOT}/expected/first-boot.sh', f'{generated_stage_path}/02-run-chroot.sh')
+            compare_files(
+                f'{TEST_RESOURCE_ROOT}/expected/first-boot.sh',
+                f'{self.PI_GEN_LOCATION}/stage2/01-sys-tweaks/files/rc.local',
+            )
         )
 
 

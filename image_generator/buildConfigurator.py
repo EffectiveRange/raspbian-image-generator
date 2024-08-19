@@ -17,11 +17,19 @@ log = get_logger('BuildConfigurator')
 
 class BuildConfiguration(object):
 
-    def __init__(self, compression: str, enable_ssh: bool, clean_build: bool, template: str) -> None:
+    def __init__(
+        self,
+        compression: str,
+        enable_ssh: bool,
+        clean_build: bool,
+        config_template: str,
+        first_boot_template: str = 'template/first_boot.j2',
+    ) -> None:
         self.compression = compression
         self.enable_ssh = '1' if enable_ssh else '0'
         self.clean_build = '1' if clean_build else '0'
-        self.template = template
+        self.config_template = config_template
+        self.first_boot_template = first_boot_template
 
 
 class IBuildConfigurator(object):
@@ -132,10 +140,11 @@ class BuildConfigurator(IBuildConfigurator):
             'stage_list': ' '.join([f'stage{i}' for i in range(config.stage + 1)]),
         }
 
-        build_config = render_template_file(self._resource_root, self._configuration.template, context)
-
+        build_config = render_template_file(self._resource_root, self._configuration.config_template, context)
         config_path = f'{self._repository_location}/config'
+
         log.info('Creating build config file', file=config_path)
+
         write_file(config_path, build_config)
 
     def _create_sub_stage_dir(self, target_stage: int) -> str:
@@ -200,7 +209,7 @@ class BuildConfigurator(IBuildConfigurator):
     def _create_custom_script(self, commands: list[str]) -> None:
         script_path = f'{self._temp_sub_stage}/{self._script_index:02}-run-chroot.sh'
 
-        log.info('Creating custom script', script=script_path)
+        log.info('Creating custom script', script=script_path, commands=commands)
 
         with open(script_path, 'w') as script_file:
             script_file.write('#!/bin/bash -ex\n\n')
@@ -210,18 +219,13 @@ class BuildConfigurator(IBuildConfigurator):
 
         self._script_index += 1
 
-    def _insert_first_boot_script(self, first_boot: list[str]) -> None:
-        script_path = '/usr/lib/raspberrypi-sys-mods/firstboot'
-        insert_before = '^reboot_pi$'
+    def _insert_first_boot_script(self, commands: list[str]) -> None:
+        context = {'commands': commands}
 
-        bash_script = [f'FIRSTBOOT="{script_path}"\n']
+        first_boot = render_template_file(self._resource_root, self._configuration.first_boot_template, context)
 
-        first_boot.append('\\\\')
+        script_path = f'{self._repository_location}/stage2/01-sys-tweaks/files/rc.local'
 
-        for line in first_boot:
-            escaped_line = line.replace("'", "'\\''")
-            bash_script.append(f"sed -i '/{insert_before}/i {escaped_line}' \"$FIRSTBOOT\"")
+        log.info('Creating script to run on first boot', script=script_path, commands=commands)
 
-        log.info('Inserting commands into first boot script', script=script_path)
-
-        self._create_custom_script(bash_script)
+        write_file(script_path, first_boot)
