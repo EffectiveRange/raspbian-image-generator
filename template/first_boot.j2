@@ -9,7 +9,7 @@ if [ -f "$first_boot_file" ]; then
 
     # remove /etc/first_boot
     rm -f "$first_boot_file"
-    echo "Removing first boot file" >> /dev/serial0
+    echo "Removing first boot file before setup" >> /dev/serial0
 
     echo "Running first boot setup..." >> /dev/serial0
 {% for command in commands %}
@@ -18,10 +18,12 @@ if [ -f "$first_boot_file" ]; then
     echo "First boot setup completed." >> /dev/serial0
 fi
 
+exit 0
+
 trap - EXIT
 
-# remove /etc/first_boot
+# remove /etc/first_boot if setup failed
 rm -f "$first_boot_file"
 echo "Removing first boot file after failure" >> /dev/serial0
 
-exit 0
+exit 1
