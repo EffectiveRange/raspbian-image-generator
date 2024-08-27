@@ -17,4 +17,6 @@ pip install debian-package-installer@git+https://github.com/EffectiveRange/debia
 
 debian-package-installer.py /tmp/package-config.json --source-config /tmp/source-config.json
 
+touch /etc/first_boot
+
 EOF
