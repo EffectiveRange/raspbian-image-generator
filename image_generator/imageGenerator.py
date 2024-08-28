@@ -2,8 +2,11 @@
 # SPDX-FileCopyrightText: 2024 Attila Gombos <attila.gombos@effective-range.com>
 # SPDX-License-Identifier: MIT
 
+import difflib
 import os
+import re
 import shutil
+from dataclasses import dataclass
 from datetime import datetime
 
 from context_logger import get_logger
@@ -14,11 +17,28 @@ from image_generator import TargetConfig, IImageBuilder, IBuildInitializer
 log = get_logger('ImageGenerator')
 
 
+@dataclass
+class ImageProperties:
+    directory: str
+    name: str
+    type: str
+
+    @property
+    def path(self) -> str:
+        return f'{self.directory}/{self.name}.{self.type}'
+
+
 class ImageGenerator(object):
 
-    def __init__(self, config_path: str, json_loader: IJsonLoader, initializer: IBuildInitializer,
-                 image_builder: IImageBuilder, output_dir: str,
-                 output_pattern: str = '{target}-{version}') -> None:
+    def __init__(
+        self,
+        config_path: str,
+        json_loader: IJsonLoader,
+        initializer: IBuildInitializer,
+        image_builder: IImageBuilder,
+        output_dir: str,
+        output_pattern: str = '{target}-{version}',
+    ) -> None:
         self._config_path = config_path
         self._json_loader = json_loader
         self._initializer = initializer
@@ -31,13 +51,19 @@ class ImageGenerator(object):
 
         self._initializer.initialize(config)
 
-        self._image_builder.build()
+        start_time = self._image_builder.build()
 
-        image_path = self._get_image_path(config)
+        source_image_path = self._get_source_image_path(config, start_time)
 
-        self._check_result(image_path)
+        self._check_result(source_image_path)
 
-        self._move_image(image_path, config)
+        image_properties = self._create_image_properties(config)
+
+        self._move_image(source_image_path, image_properties)
+
+        self._export_config(config, image_properties)
+
+        self._export_package_list(image_properties)
 
         return config
 
@@ -55,8 +81,8 @@ class ImageGenerator(object):
 
         return target
 
-    def _get_image_path(self, config: TargetConfig) -> str:
-        date = datetime.now().strftime('%Y-%m-%d')
+    def _get_source_image_path(self, config: TargetConfig, start_time: datetime) -> str:
+        date = start_time.strftime('%Y-%m-%d')
         file_type = self._get_file_type()
         image_name_pattern = 'image_{date}-{target}-lite.{type}'
 
@@ -71,38 +97,53 @@ class ImageGenerator(object):
         else:
             log.info('Image found', image=image_path)
 
-    def _move_image(self, image_path: str, config: TargetConfig) -> None:
-        file_type = self._get_file_type()
-        image_name = self._output_pattern.format(target=config.name, version=config.version)
-        output_path = f'{self._output_dir}/{config.name}/{config.version}'
-        target_image_path = f'{output_path}/{image_name}.{file_type}'
+    def _create_image_properties(self, config: TargetConfig) -> ImageProperties:
+        return ImageProperties(
+            directory=f'{self._output_dir}/{config.name}/{config.version}',
+            name=self._output_pattern.format(target=config.name, version=config.version),
+            type=self._get_file_type(),
+        )
 
-        log.info('Moving image', source=image_path, target=target_image_path)
+    def _move_image(self, source_image_path: str, image_properties: ImageProperties) -> None:
+        log.info('Moving image', source=source_image_path, target=image_properties.path)
 
-        os.makedirs(output_path, exist_ok=True)
+        os.makedirs(image_properties.directory, exist_ok=True)
 
-        if os.path.exists(target_image_path):
-            os.unlink(target_image_path)
+        if os.path.exists(image_properties.path):
+            os.unlink(image_properties.path)
 
-        shutil.move(image_path, target_image_path)
+        shutil.move(source_image_path, image_properties.path)
 
-        export_path = f'{output_path}/{image_name}.json'
+    def _export_config(self, config: TargetConfig, image_properties: ImageProperties) -> None:
+        export_path = f'{image_properties.directory}/{image_properties.name}.json'
         log.info('Exporting target configuration to file', file=export_path)
 
-        self._export_config(export_path, config)
+        with open(export_path, 'w') as config_file:
+            config_file.write(f'{config.model_dump_json(indent=2, exclude_none=True)}\n')
 
     def _get_file_type(self) -> str:
-        compression_to_file_type = {
-            'none': 'img',
-            'zip': 'zip',
-            'gz': 'img.gz',
-            'xz': 'img.xz'
-        }
+        compression_to_file_type = {'none': 'img', 'zip': 'zip', 'gz': 'img.gz', 'xz': 'img.xz'}
 
         compression = self._initializer.get_configuration().compression
 
         return compression_to_file_type.get(compression, 'img')
 
-    def _export_config(self, config_path: str, config: TargetConfig) -> None:
-        with open(config_path, 'w') as config_file:
-            config_file.write(f'{config.model_dump_json(indent=2, exclude_none=True)}\n')
+    def _export_package_list(self, image_properties: ImageProperties) -> None:
+        package_list_dir = f'{self._initializer.get_repository_path()}/deploy'
+        before_install = f'{package_list_dir}/before-install.list'
+        after_install = f'{package_list_dir}/after-install.list'
+
+        with open(before_install, 'r') as before_file, open(after_install, 'r') as after_file:
+            pattern = r'\[.*?\]'
+            before = re.sub(pattern, '', before_file.read()).splitlines()
+            after = re.sub(pattern, '', after_file.read()).splitlines()
+            diff = difflib.ndiff(before, after)
+
+        export_path = f'{image_properties.directory}/{image_properties.name}.list'
+
+        installed_packages = [package.strip('+ ') for package in diff if package.startswith('+')]
+
+        log.info('Exporting installed package list to file', file=export_path)
+
+        with open(export_path, 'w') as installed_file:
+            installed_file.write('\n'.join(installed_packages) + '\n')
