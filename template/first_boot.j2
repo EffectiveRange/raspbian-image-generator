@@ -1,29 +1,38 @@
 #!/bin/bash -ex
 
+# SPDX-FileCopyrightText: 2024 Ferenc Nandor Janky <ferenj@effective-range.com>
+# SPDX-FileCopyrightText: 2024 Attila Gombos <attila.gombos@effective-range.com>
+# SPDX-License-Identifier: MIT
+
 first_boot_file="/etc/first_boot"
 
-trap 'echo "Failed to run first boot setup!" >> /dev/serial0' EXIT
+echo_serial() {
+    echo "$1" >> /dev/serial0
+}
 
-# Check if /etc/first_boot exists
+first_boot_cleanup() {
+    trap - EXIT
+
+    if [ -f "$first_boot_file" ]; then
+        echo_serial "Removing first boot file $first_boot_file"
+        rm -f "$first_boot_file"
+
+        if [ "$2" -ne 0 ]; then
+            echo_serial "Failed to run first boot setup: '${1% >> /dev/serial0 2>&1}' returned non-zero exit status $2"
+            exit 1
+        fi
+    fi
+}
+
+trap 'first_boot_cleanup "$BASH_COMMAND" "$?"' EXIT
+
 if [ -f "$first_boot_file" ]; then
 
-    # remove /etc/first_boot
-    rm -f "$first_boot_file"
-    echo "Removing first boot file before setup" >> /dev/serial0
-
-    echo "Running first boot setup..." >> /dev/serial0
+    echo_serial "Running first boot setup..."
 {% for command in commands %}
-    {{ command }}{% endfor %}
+    {{ command }} >> /dev/serial0 2>&1{% endfor %}
 
-    echo "First boot setup completed." >> /dev/serial0
+    echo_serial "First boot setup completed."
 fi
 
 exit 0
-
-trap - EXIT
-
-# remove /etc/first_boot if setup failed
-rm -f "$first_boot_file"
-echo "Removing first boot file after failure" >> /dev/serial0
-
-exit 1

@@ -52,6 +52,10 @@ def compare_lines(lines1: list[str], lines2: list[str]) -> bool:
 def create_pi_gen_tree(pi_gen_path: str) -> None:
     delete_directory(TEST_FILE_SYSTEM_ROOT)
     os.makedirs(pi_gen_path, exist_ok=True)
+    deploy_dir = f'{pi_gen_path}/deploy'
+    os.makedirs(deploy_dir, exist_ok=True)
+    copy_file(f'{TEST_RESOURCE_ROOT}/config/before-install.list', deploy_dir)
+    copy_file(f'{TEST_RESOURCE_ROOT}/config/after-install.list', deploy_dir)
     boot_files_path = f'{pi_gen_path}/stage1/00-boot-files/files'
     os.makedirs(boot_files_path, exist_ok=True)
     copy_file(f'{TEST_RESOURCE_ROOT}/config/cmdline.txt', boot_files_path)

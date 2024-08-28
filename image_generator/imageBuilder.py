@@ -7,6 +7,7 @@ import re
 import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from functools import partial
 from logging import DEBUG, WARNING
 from subprocess import PIPE, Popen, CalledProcessError
@@ -19,7 +20,7 @@ log = get_logger('ImageBuilder')
 
 class IImageBuilder(object):
 
-    def build(self, command: str = './build.sh') -> None:
+    def build(self, command: str = './build.sh') -> datetime:
         raise NotImplementedError()
 
 
@@ -29,19 +30,28 @@ class ImageBuilder(IImageBuilder):
         self._repository_path = repository_path
         self._stage_stack: list[str] = []
 
-    def build(self, command: str = './build.sh') -> None:
-        log.info('Building image', path=self._repository_path, command=command)
+    def build(self, command: str = './build.sh') -> datetime:
+        start_time = datetime.now()
+
+        log.info('Building image', path=self._repository_path, command=command, start_time=start_time)
 
         os.chdir(self._repository_path)
 
         return_code = self._run_command(command)
 
         if return_code:
-            log.error('Failed to build image', path=self._repository_path, return_code=return_code, command=command,
-                      stage=self._get_current_stage())
+            log.error(
+                'Failed to build image',
+                path=self._repository_path,
+                return_code=return_code,
+                command=command,
+                stage=self._get_current_stage(),
+            )
             raise CalledProcessError(return_code, command)
 
         log.info('Image build completed', path=self._repository_path, command=command)
+
+        return start_time
 
     def _run_command(self, command: str) -> Optional[int]:
         log.info('Executing command', command=command)
@@ -59,8 +69,12 @@ class ImageBuilder(IImageBuilder):
         end_time = time.time()
         elapsed_time = end_time - start_time
 
-        log.info('Command execution completed',
-                 command=command, return_code=process.returncode, elapsed_time=f'{elapsed_time:.3f}s')
+        log.info(
+            'Command execution completed',
+            command=command,
+            return_code=process.returncode,
+            elapsed_time=f'{elapsed_time:.3f}s',
+        )
 
         return process.poll()
 
