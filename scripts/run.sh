@@ -24,5 +24,6 @@ touch /etc/first_boot
 
 EOF
 
-cp -v "${ROOTFS_DIR}/var/tmp/before-install.list" "${DEPLOY_DIR}/"
-cp -v "${ROOTFS_DIR}/var/tmp/after-install.list" "${DEPLOY_DIR}/"
+mkdir -p "${DEPLOY_DIR}"
+cp -v "${ROOTFS_DIR}/var/tmp/before-install.list" "${DEPLOY_DIR}"
+cp -v "${ROOTFS_DIR}/var/tmp/after-install.list" "${DEPLOY_DIR}"
