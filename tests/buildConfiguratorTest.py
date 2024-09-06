@@ -2,12 +2,14 @@ import os
 import unittest
 from unittest import TestCase
 
+from common_utility import delete_directory
 from context_logger import setup_logging
 from package_downloader import PackageConfig, ReleaseConfig
 from package_installer import SourceConfig
+from test_utility import compare_files
 
 from image_generator import BuildConfigurator, TargetConfig, BuildConfiguration
-from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, delete_directory, compare_files, create_pi_gen_tree
+from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, create_pi_gen_tree
 
 
 class BuildConfiguratorTest(TestCase):

@@ -17,6 +17,6 @@ setup(
         'jinja2',
         'pydantic',
         'python-context-logger@git+https://github.com/EffectiveRange/python-context-logger.git@latest',
-        'debian-package-installer' '@git+https://github.com/EffectiveRange/debian-package-installer.git@latest',
+        'debian-package-installer@git+https://github.com/EffectiveRange/debian-package-installer.git@latest',
     ],
 )

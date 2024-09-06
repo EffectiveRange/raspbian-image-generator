@@ -5,11 +5,13 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock
 
+from common_utility import delete_directory
 from context_logger import setup_logging
 from package_downloader import IJsonLoader, PackageConfig
+from test_utility import compare_files
 
 from image_generator import ImageGenerator, IImageBuilder, TargetConfig, BuildConfiguration, IBuildInitializer
-from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, delete_directory, create_pi_gen_tree, compare_files
+from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, create_pi_gen_tree
 
 
 class ImageGeneratorTest(TestCase):

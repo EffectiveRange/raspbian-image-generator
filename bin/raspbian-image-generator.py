@@ -10,9 +10,9 @@ from argparse import Namespace, ArgumentParser, ArgumentDefaultsHelpFormatter, B
 from pathlib import Path
 
 from apt import Cache
+from common_utility import SessionProvider, FileDownloader, JsonLoader
 from context_logger import setup_logging, get_logger
 from git import Repo
-from package_downloader import JsonLoader, FileDownloader, SessionProvider
 from package_installer import AptInstaller
 
 from image_generator import ImageGenerator, BuildConfigurator, ImageBuilder, BuildConfiguration, BuildInitializer

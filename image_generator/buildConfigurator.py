@@ -6,11 +6,11 @@ import os
 import re
 import shutil
 
+from common_utility import T, render_template_file, create_file
 from context_logger import get_logger
-from package_downloader import T
 from pydantic import TypeAdapter
 
-from image_generator import TargetConfig, render_template_file, write_file
+from image_generator import TargetConfig
 
 log = get_logger('BuildConfigurator')
 
@@ -145,7 +145,7 @@ class BuildConfigurator(IBuildConfigurator):
 
         log.info('Creating build config file', file=config_path)
 
-        write_file(config_path, build_config)
+        create_file(config_path, build_config)
 
     def _create_sub_stage_dir(self, target_stage: int) -> str:
         stage_dir = f'{self._repository_location}/stage{target_stage}'
@@ -228,4 +228,4 @@ class BuildConfigurator(IBuildConfigurator):
 
         log.info('Creating script to run on first boot', script=script_path, commands=commands)
 
-        write_file(script_path, first_boot)
+        create_file(script_path, first_boot)

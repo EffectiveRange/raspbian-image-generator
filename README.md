@@ -1,3 +1,7 @@
+
+[![Test and Release](https://github.com/EffectiveRange/raspbian-image-generator/actions/workflows/test_and_release.yml/badge.svg)](https://github.com/EffectiveRange/raspbian-image-generator/actions/workflows/test_and_release.yml)
+[![Coverage badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/EffectiveRange/raspbian-image-generator/python-coverage-comment-action-data/endpoint.json)](https://htmlpreview.github.io/?https://github.com/EffectiveRange/raspbian-image-generator/blob/python-coverage-comment-action-data/htmlcov/index.html)
+
 # raspbian-image-generator
 
 Raspberry Pi OS image generator using the official pi-gen repository
@@ -58,6 +62,7 @@ pip install .
 ### Command line reference
 
 ```bash
+$ bin/raspbian-image-generator.py --help
 usage: raspbian-image-generator.py [-h] [-f LOG_FILE] [-l LOG_LEVEL] [-d DOWNLOAD] [-p REPOSITORY_PATH] [-u REPOSITORY_URL] [-o OUTPUT] [-t CONFIG_TEMPLATE] [-c COMPRESSION] [--enable-ssh | --no-enable-ssh] [--clean-build | --no-clean-build] target_config target_name
 
 positional arguments:
@@ -79,7 +84,7 @@ options:
   -o OUTPUT, --output OUTPUT
                         output image directory (default: image)
   -t CONFIG_TEMPLATE, --config-template CONFIG_TEMPLATE
-                        pi-gen config template (default: config/config.template)
+                        pi-gen config template (default: template/config.j2)
   -c COMPRESSION, --compression COMPRESSION
                         output image compression (default: xz)
   --enable-ssh, --no-enable-ssh
