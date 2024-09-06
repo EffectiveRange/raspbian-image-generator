@@ -2,10 +2,11 @@ import unittest
 from subprocess import CalledProcessError
 from unittest import TestCase
 
+from common_utility import copy_file
 from context_logger import setup_logging
 
 from image_generator import ImageBuilder
-from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, copy_file
+from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT
 
 
 class ImageBuilderTest(TestCase):

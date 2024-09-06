@@ -2,12 +2,13 @@ import unittest
 from unittest import TestCase
 from unittest.mock import MagicMock
 
+from common_utility import delete_directory
 from context_logger import setup_logging
 from git import Repo
 from package_installer import IAptInstaller
 
 from image_generator import IBuildConfigurator, TargetConfig, BuildConfiguration, BuildInitializer
-from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, delete_directory, create_pi_gen_tree
+from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, create_pi_gen_tree
 
 
 class BuildInitializerTest(TestCase):
