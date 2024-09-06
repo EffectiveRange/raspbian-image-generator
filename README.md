@@ -4,14 +4,13 @@
 
 | Name                                  |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |-------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| image\_generator/\_\_init\_\_.py      |        6 |        0 |        0 |        0 |    100% |           |
+| image\_generator/\_\_init\_\_.py      |        5 |        0 |        0 |        0 |    100% |           |
 | image\_generator/buildConfigurator.py |      130 |        0 |       30 |        9 |     94% |80->83, 83->88, 90->93, 93->96, 101->exit, 168->166, 177->184, 205->exit, 214->218 |
 | image\_generator/buildInitializer.py  |       43 |        0 |       10 |        2 |     96% |58->exit, 62->58 |
-| image\_generator/fileUtility.py       |       12 |        0 |        2 |        1 |     93% |  13->exit |
 | image\_generator/imageBuilder.py      |       63 |        0 |       22 |        6 |     93% |61->69, 62->61, 64->66, 66->62, 67->62, 102->exit |
 | image\_generator/imageGenerator.py    |       88 |        1 |       16 |        5 |     94% |27->26, 113, 121->exit, 136->142, 148->exit |
 | image\_generator/targetConfig.py      |       16 |        0 |        0 |        0 |    100% |           |
-|                             **TOTAL** |  **358** |    **1** |   **80** |   **23** | **95%** |           |
+|                             **TOTAL** |  **345** |    **1** |   **78** |   **22** | **95%** |           |
 
 
 ## Setup coverage badge
