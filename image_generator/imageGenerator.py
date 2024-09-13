@@ -9,7 +9,7 @@ import shutil
 from dataclasses import dataclass
 from datetime import datetime
 
-from common_utility import IJsonLoader
+from common_utility.jsonLoader import IJsonLoader
 from context_logger import get_logger
 
 from image_generator import TargetConfig, IImageBuilder, IBuildInitializer

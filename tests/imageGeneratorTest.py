@@ -6,8 +6,9 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 from common_utility import delete_directory
+from common_utility.jsonLoader import IJsonLoader
 from context_logger import setup_logging
-from package_downloader import IJsonLoader, PackageConfig
+from package_downloader import PackageConfig
 from test_utility import compare_files
 
 from image_generator import ImageGenerator, IImageBuilder, TargetConfig, BuildConfiguration, IBuildInitializer

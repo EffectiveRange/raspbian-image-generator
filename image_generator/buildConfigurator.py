@@ -6,7 +6,8 @@ import os
 import re
 import shutil
 
-from common_utility import T, render_template_file, create_file
+from common_utility import render_template_file, create_file
+from common_utility.jsonLoader import T
 from context_logger import get_logger
 from pydantic import TypeAdapter
 
