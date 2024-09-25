@@ -8,17 +8,17 @@ cp -v files/*.json "${ROOTFS_DIR}/var/tmp/"
 
 on_chroot << EOF
 
-apt list --installed > /var/tmp/before-install.list
+cd /var/tmp
 
-python -m venv /var/tmp/venv
+apt list --installed > before-install.list
 
-source /var/tmp/venv/bin/activate
+python -m venv venv
 
-pip install debian-package-installer@git+https://github.com/EffectiveRange/debian-package-installer.git@latest
+venv/bin/pip3 install debian-package-installer@git+https://github.com/EffectiveRange/debian-package-installer.git@latest
 
-debian-package-installer.py /var/tmp/package-config.json --source-config /var/tmp/source-config.json
+venv/bin/debian-package-installer.py package-config.json --source-config source-config.json
 
-apt list --installed > /var/tmp/after-install.list
+apt list --installed > after-install.list
 
 touch /etc/first_boot
 
