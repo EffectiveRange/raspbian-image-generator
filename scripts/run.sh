@@ -6,6 +6,12 @@
 
 cp -v files/*.json "${ROOTFS_DIR}/var/tmp/"
 
+if [ -f files/rc.local ]; then
+    install -m 755 files/rc.local "${ROOTFS_DIR}/etc/rc.local"
+
+    touch "${ROOTFS_DIR}/etc/first_boot"
+fi
+
 on_chroot << EOF
 
 cd /var/tmp
@@ -19,8 +25,6 @@ venv/bin/pip3 install debian-package-installer@git+https://github.com/EffectiveR
 venv/bin/debian-package-installer.py package-config.json --source-config source-config.json
 
 apt list --installed > after-install.list
-
-touch /etc/first_boot
 
 EOF
 

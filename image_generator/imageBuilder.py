@@ -33,7 +33,7 @@ class ImageBuilder(IImageBuilder):
     def build(self, command: str = './build.sh') -> datetime:
         start_time = datetime.now()
 
-        log.info('Building image', path=self._repository_path, command=command, start_time=start_time)
+        log.info('Building image', path=self._repository_path, command=command, start_time=start_time.isoformat())
 
         os.chdir(self._repository_path)
 

@@ -15,7 +15,7 @@ class TargetConfig(BaseModel):
     reference: str
     stage: int = 2
     packages: list[PackageConfig]
-    sources: Optional[list[SourceConfig]] = None
+    sources: list[SourceConfig] = []
     boot_cmdline: Optional[list[str]] = None
     boot_config: Optional[list[str]] = None
     first_boot: Optional[list[str]] = None

@@ -4,11 +4,10 @@ from unittest import TestCase
 
 from common_utility import delete_directory
 from context_logger import setup_logging
+from image_generator import BuildConfigurator, TargetConfig, BuildConfiguration
 from package_downloader import PackageConfig, ReleaseConfig
 from package_installer import SourceConfig
 from test_utility import compare_files
-
-from image_generator import BuildConfigurator, TargetConfig, BuildConfiguration
 from tests import TEST_RESOURCE_ROOT, TEST_FILE_SYSTEM_ROOT, create_pi_gen_tree
 
 
@@ -79,12 +78,9 @@ class BuildConfiguratorTest(TestCase):
                 f'{self.PI_GEN_LOCATION}/stage1/00-boot-files/files/config.txt',
             )
         )
-        self.assertTrue(
-            compare_files(
-                f'{TEST_RESOURCE_ROOT}/expected/07-resize-init.diff',
-                f'{self.PI_GEN_LOCATION}/stage2/01-sys-tweaks/00-patches/07-resize-init.diff',
-            )
-        )
+        with (open(f'{TEST_RESOURCE_ROOT}/expected/07-resize-init.diff', 'r') as expected,
+              open(f'{self.PI_GEN_LOCATION}/stage2/01-sys-tweaks/00-patches/07-resize-init.diff', 'r') as actual):
+            self.assertEqual(expected.readlines(), actual.readlines())
 
     def test_build_configuration_generated_with_custom_commands(self) -> None:
         # Given
@@ -129,7 +125,7 @@ class BuildConfiguratorTest(TestCase):
         self.assertTrue(
             compare_files(
                 f'{TEST_RESOURCE_ROOT}/expected/first-boot.sh',
-                f'{self.PI_GEN_LOCATION}/stage2/01-sys-tweaks/files/rc.local',
+                f'{self.PI_GEN_LOCATION}/stage2/02-install-packages/files/rc.local',
             )
         )
 

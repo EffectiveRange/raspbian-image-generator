@@ -9,9 +9,8 @@ import shutil
 from common_utility import render_template_file, create_file
 from common_utility.jsonLoader import T
 from context_logger import get_logger
-from pydantic import TypeAdapter
-
 from image_generator import TargetConfig
+from pydantic import TypeAdapter
 
 log = get_logger('BuildConfigurator')
 
@@ -19,12 +18,12 @@ log = get_logger('BuildConfigurator')
 class BuildConfiguration(object):
 
     def __init__(
-        self,
-        compression: str,
-        enable_ssh: bool,
-        clean_build: bool,
-        config_template: str,
-        first_boot_template: str = 'template/first_boot.j2',
+            self,
+            compression: str,
+            enable_ssh: bool,
+            clean_build: bool,
+            config_template: str,
+            first_boot_template: str = 'template/first_boot.j2',
     ) -> None:
         self.compression = compression
         self.enable_ssh = '1' if enable_ssh else '0'
@@ -45,11 +44,11 @@ class IBuildConfigurator(object):
 class BuildConfigurator(IBuildConfigurator):
 
     def __init__(
-        self,
-        resource_root: str,
-        repository_location: str,
-        configuration: BuildConfiguration,
-        sub_stage_name: str = 'install-packages',
+            self,
+            resource_root: str,
+            repository_location: str,
+            configuration: BuildConfiguration,
+            sub_stage_name: str = 'install-packages',
     ) -> None:
         self._resource_root = resource_root
         self._repository_location = repository_location
@@ -175,12 +174,11 @@ class BuildConfigurator(IBuildConfigurator):
         files_dir = f'{self._temp_sub_stage}/files'
         os.makedirs(files_dir, exist_ok=True)
 
-        if config.sources:
-            source_config_path = f'{files_dir}/source-config.json'
+        source_config_path = f'{files_dir}/source-config.json'
 
-            log.info('Creating source config file', file=source_config_path)
+        log.info('Creating source config file', file=source_config_path)
 
-            self._create_config_file(source_config_path, config.sources)
+        self._create_config_file(source_config_path, config.sources)
 
         package_config_path = f'{files_dir}/package-config.json'
 
@@ -195,6 +193,7 @@ class BuildConfigurator(IBuildConfigurator):
         log.info('Copying sub-stage script', source=source_path, target=target_path)
 
         shutil.copyfile(source_path, target_path)
+
         os.system(f'chmod +x {target_path}')
 
         self._script_index += 1
@@ -225,8 +224,10 @@ class BuildConfigurator(IBuildConfigurator):
 
         first_boot = render_template_file(self._resource_root, self._configuration.first_boot_template, context)
 
-        script_path = f'{self._repository_location}/stage2/01-sys-tweaks/files/rc.local'
+        script_path = f'{self._temp_sub_stage}/files/rc.local'
 
         log.info('Creating script to run on first boot', script=script_path, commands=commands)
 
         create_file(script_path, first_boot)
+
+        os.system(f'chmod +x {script_path}')
