@@ -20,7 +20,7 @@ first_boot_cleanup() {
 }
 
 if [ ! -f /dev/serial0 ]; then
-    ln -s /dev/ttyAMA0 /dev/serial0
+    ln -sf /dev/ttyAMA0 /dev/serial0
 fi
 
 trap 'first_boot_cleanup "$BASH_COMMAND" "$?"' EXIT
